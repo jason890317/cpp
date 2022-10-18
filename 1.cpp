@@ -1,22 +1,14 @@
-#include <vector>
-#include <iostream>
+#include <stdio.h>
+#include <string.h>
 
-using namespace std;
+int main () {
+   char str[] = "http://.www.tutorialspoint.com";
+   char ch = 'h';
+   const char *ret;
 
-int main()
-{
-	int a=10;
-	int b[]={1,2,3};
-	b[1]=1;
-	vector<int> v;
-	for(int i=0;i<10;i++)
-	{
-		v.push_back(i);
-	}
-	for(int i : v)
-	{
-		cout<<i<<endl;
-	}
-	
-	return 0;
+   ret = strchr(str, ch);
+
+   printf("String after |%c| is - |%d|\n", ch, ret-str+1);
+   
+   return(0);
 }
