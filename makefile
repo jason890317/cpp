@@ -1,27 +1,22 @@
-exe=pro_1 pro_21 pro_9 pro_13
-cc=g++
-config=-Wall -g -o
+.PHONY = all clean
 
-pro_13:pro_13.o
-	$(cc) $(config) $@ $^
+CC = g++	# compiler to use
 
-pro_9:pro_9.o
-	$(cc) $(config) $@ $^
+LINKERFLAG = -lm
 
+SRCS := $(wildcard *.cpp)
+BINS := $(SRCS:%.cpp=%)
 
-pro_21:pro_21.o
-	$(cc) $(config) $@ $^
+all: ${BINS}
 
+%: %.o
+	@echo "Checking.."
+	${CC} ${LINKERFLAG} $< -o $@
 
-pro_1:pro_1.o
-	$(cc) $(config) $@ $^
+%.o: %.cpp
+	@echo "Creating object.."
+	${CC} -c $<
 
-
-
-*.o:*.cpp
-	$(cc) -c $^
-
-.PHONY:clean
 clean:
-	@echo "---clean---"
-	-@rm -rf $(exe) *.o *.out
+	@echo "Cleaning up..."
+	rm -rvf *.o ${BINS}
