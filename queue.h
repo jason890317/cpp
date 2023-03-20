@@ -1,10 +1,15 @@
 #ifndef QUEUE_H
 #define QUEUE_H
 
+#include<iostream>
+using namespace std;
+
+const int MaxSize=101;
 template <class T>
 class queue
 {
     private:
+        
         T queue[MaxSize];
         int front=0;
         int back=0;

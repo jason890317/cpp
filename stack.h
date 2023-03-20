@@ -1,11 +1,16 @@
 #ifndef STACK_H
 #define STACK_H
 
+#include<iostream>
+using namespace std;
+
+const int Max_Size=101;
 template <class T>
 class stack
 {
     private:
-        T stack[MaxSize];
+        
+        T stack[Max_Size];
         int top=0;
 
 
@@ -36,7 +41,7 @@ class stack
 
         void push(T item)
         {
-            if(top>=MaxSize-1)
+            if(top>=Max_Size-1)
             {
                 cout<<"stack is full"<<endl;
                 exit(-1);
