@@ -2,11 +2,11 @@
 #define TREE_H
 #include<iostream>
 #include<string>
+#include"queue.h"
 using namespace std;
 template <class T>
 class node
 {
-    
     public:
         T item;
         node<T> *right;
@@ -26,28 +26,17 @@ class node
 template <class T>
 class tree : public node<T>
 {
-    private:
-        node<T> *root;
     public:
+        node<T> *root;
         tree():root(NULL){};
         tree(node<T> *it):root(it){};
         void add_right(node<T> *it)
         {
             root->right=it;
         }
-
         void add_left(node<T> *it)
         {
             root->left=it;
-        }
-
-        void change_root(node<T> *it)
-        {
-            root=it;
-        }
-        node<T>* r_root()
-        {
-            return root;
         }
         string preorder(node<T> *cur)
         {
@@ -65,6 +54,45 @@ class tree : public node<T>
             }
             return result;
         }
+        void add(T a)
+        {
+            node<T> *n= new node<T>(a,0,0);
+            
+            if(root==NULL)
+            {
+                root=n;
+            }
+            else
+            {
+                queue<node<T>*> qu;
+                node<T> *no;
+                qu.push_back(root);
+                while(true) 
+                {  
+                    no = qu.pop_front();  
+                    if(no->left != NULL && no->right != NULL) 
+                    {  
+                        qu.push_back(no->left);  
+                        qu.push_back(no->right);  
+                    }  
+                    else 
+                    {  
+                        if(no->left == NULL) 
+                        {  
+                            no->left = n;  
+                            qu.push_back(no->left);  
+                        }  
+                        else 
+                        {  
+                            no->right = n;  
+                            qu.push_back(no->right);  
+                        }  
+                        break;  
+                    }  
+                }
+            }
+        }
+
         
 };
 

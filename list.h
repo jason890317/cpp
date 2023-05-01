@@ -1,141 +1,191 @@
 #ifndef LIST_H
 #define LIST_H
-
-#include <iostream>
-#include <string>
-
+#include<iostream>
+#include<string>
 using namespace std;
-
 template <class T>
-class node{
+class node
+{
     public:
-        node<T>():item(0),num(0),next(NULL){};
-        node<T>(T a):item(a),num(0){};
-        node<T>(T a,int b):item(a),num(b),next(NULL){};
-        int num;
+        node<T>(T it):item(it),next(0){};
+        node<T>():item(0),next(0){};
         T item;
-        node<T> *next; 
+        node<T> *next;
+   
 };
 
 template <class T>
-class linklist{
-    private:
-        node<T>* head;
-        int size;
+class list : public node<T>
+{
     public:
-        linklist<T>():head(NULL),size(0){};
-        linklist<T>(linklist *a):head(a->head),size(a->size){};
-        void insert(T item , int num=0)
+        node<T> *root;
+        list<T>(node<T> *it):root(it){};
+        list<T>():root(0){};
+        void add_node(T it)
         {
-            node<T> *new_node= new node<T>(item, num);
-            if(this->head==NULL)
+            node<T> *n=new node<T>(it);
+            node<T> *cur=root;
+            if(cur==NULL)
             {
-                this->head=new_node;
+                root=n;
             }
             else
             {
-                new_node->next=this->head;
-                this->head=new_node;
+                while(cur->next!=NULL)
+                {
+                    cur=cur->next;
+                }
+                cur->next=n;
             }
-            size++;
-        }
-        T pop()
-        {
-            T result;
-            result=this->head->item;
-            this->head=this->head->next;
-            size--;
-            return result;
-        }
-        bool empty()
-        {
-            return (this->head==NULL)?true:false;
+            
         }
 
-        void size_count()
+        void del(int tar)
         {
-            int c=0;
-            node<T> *p=head;
-            while(p!=NULL)
+            node<T> *cur=root;
+            if(cur!=NULL)
             {
-                c++;
-                p=p->next;
+                for(int i=0;i<tar-1;i++)
+                {
+                    cur=cur->next;
+                }
+                cur->next=cur->next->next;
             }
-            size=c;
         }
 
-        //0~n-1
-        linklist<T>* extract(int a, int b) //from a to the next b items (a!=0)
+        void show()
         {
-            node<T> *p=head, *r=head, *part_h=head, *part_e=head;
-            linklist<T> *new_list = new linklist<T>;
-            for(int i=0;i<a-1;i++)
+            node<T> *cur=root;
+            while(cur!=NULL)
             {
-                p=p->next;
+                cout<<cur->item<<" ";
+                cur=cur->next;
             }
-            part_h=p->next;
-            for(int i=0;i<a+b-1;i++)
-            {
-                part_e=part_e->next;
-            }
-            r=part_e->next;
-
-            p->next=r;
-            part_e->next=NULL;
-            while(part_h!=NULL)
-            {
-                new_list->insert(part_h->item);
-                part_h=part_h->next;
-            }
-            new_list->inverse(); //make the order right
-            size_count();
-            return new_list;
         }
 
-        //0~n-1
-        void paste(int a, linklist<T> temp) //add after a
-        {   
-            node<T> *p=head, *q=head;
-            linklist<T> *r=&temp;
-            if(head==NULL)
+        int size()
+        {
+            int num=0;
+            for(node<T> *cur=root;cur!=NULL;cur=cur->next)
             {
-                head=r->head;
+                num++;
             }
-            else
+            return num;
+        }
+
+        node<T>* cut(int tar,int num)//from tar to tar+num
+        {
+            node<T> *cur=root;
+            node<T> *q=root;
+            node<T> *p=root;
+            int si =this->size();
+            if(root == NULL)
             {
-                for(int i=0;i<a;i++)
+                return cur;
+            }
+
+            if(tar == 0 && num != si)
+            {
+                
+                for(int i=0;i<num-1;i++)
                 {
                     p=p->next;
                 }
-                if(p->next==NULL)
-                {
-                    p->next=r->head;
-                }
-                else
-                {
-                    q=p->next;
-                    p->next=r->head;
-                    while(r->head->next!=NULL)
-                    {
-                        r->head=r->head->next;
-                    }
-                    r->head->next=q;
-                }   
+                root=p->next;
+                p->next=NULL;
+
+                return cur;
             }
-            size_count();
-        }
-        void show()
-        {   
-            node<T> *p=head;
-            while(p!=NULL)
+            if(tar == 0 && num == si)
             {
-                cout<<p->num<<" / "<<p->item<<endl;
-                p=p->next;
+                
+                root=NULL;
+                return cur;
+            }
+            
+            if(tar + num ==si)
+            {
+                for(int i=0;i<tar-1;i++)
+                {
+                    q=q->next;
+                }
+                p=q->next;
+                q->next=NULL;
+                
+                return p;
+            }
+
+            if(tar!=0 && tar + num < si)
+            {
+                
+                for(int i=0;i<tar-1;i++)
+                {
+                    q=q->next;
+                }
+
+                for(int i=0;i<tar+num-1;i++)
+                {
+                    p=p->next;
+                }
+
+                cur=q->next;
+
+                q->next=p->next;
+                p->next=NULL;
+
+                return cur;
+            }
+            return cur;
+        }
+
+        void paste(int tar, node<T> *it)//after tar
+        {
+            node<T> *cur=root;
+            node<T> *p=root;
+            int si =this->size();
+            if(cur == NULL )
+            {
+                root =it;
+            };
+            if(tar == -1 && cur != NULL)
+            {
+                cur=it;
+                while(cur->next!=NULL)
+                {
+                    cur=cur->next;
+                }
+                cur->next=root;
+                root=it;
+            }
+            if(tar == si-1 && cur != NULL)
+            {
+                while(cur->next!=NULL)
+                {
+                    cur=cur->next;
+                }
+                cur->next=it;
+            }
+            if(tar != -1 && tar < si-1 && cur != NULL)
+            {
+                cur=it;
+                while(cur->next!=NULL)
+                {
+                    cur=cur->next;
+                }
+                for(int i=0;i<tar;i++)
+                {
+                    p=p->next;
+                }
+
+                cur->next=p->next;
+                p->next=it;
+            
             }
         }
+
         void inverse()
         {
-            node<T> *p=head, *q=NULL, *r=NULL;
+            node<T> *p=root, *q=NULL, *r=NULL;
             while(p!=NULL)
             {
                 r=q;
@@ -143,12 +193,12 @@ class linklist{
                 p=p->next;
                 q->next=r;
             }
-            head=q;
+            root=q;
         }
-       
+
         void swap(int a,int b)
         {
-            node<T> *a_1=head,*a_2=head;
+            node<T> *a_1=root,*a_2=root;
             int temp_num;
             T temp_item;
             for(int i=0;i<a;i++)
@@ -160,71 +210,44 @@ class linklist{
                 a_2=a_2->next;
             }
             temp_item=a_1->item;
-            temp_num=a_1->num;
-
-            a_1->item=a_2->item;
-            a_1->num=a_2->num;
-
-            a_2->item=temp_item;
-            a_2->num=temp_num;
-
-        }
         
-
-        void sort(bool a)//big to small , 1 for item, 0 for num
+            a_1->item=a_2->item;
+        
+            a_2->item=temp_item;
+        
+        }
+        void sort()
         {
-            node<T> *h=head;
+            node<T> *h=root;
             node<T> *p=h;
             int max;
-            if(a)
+            int size =this->size();
+            max=root->item;
+            for(int i=0;i<size-1;i++)
             {
-                max=head->item;
-                for(int i=0;i<size-1;i++)
+                p=h;
+                max=h->item;
+                
+                for(int j=i;j<size;j++)
                 {
-                    p=h;
-                    max=h->item;
-                    
-                    for(int j=i;j<size;j++)
+                    if(p->item>max)
                     {
-                        if(p->item>max)
-                        {
-                            max=p->item;
-                            swap(i,j);
-                        }
-                        p=p->next;
+                        max=p->item;
+                        swap(i,j);
                     }
-                                  
-                    h=h->next;
+                    p=p->next;
                 }
+                                
+                h=h->next;
             }
-            else
-            {
-                max=head->num;
-                for(int i=0;i<size-1;i++)
-                {
-                    p=h;
-                    max=h->num;
-                    
-                    for(int j=i;j<size;j++)
-                    {
-                        if(p->num>max)
-                        {
-                            max=p->num;
-                            swap(i,j);
-                        }
-                        p=p->next;
-                    }
-                                  
-                    h=h->next;
-                }
-
-            }
+            
+            
         }
-        
+
         int find_max() //return 0~n-1
         {
-            node<T> *p=head;
-            int max=head->item;
+            node<T> *p=root;
+            int max=root->item;
             int count=0;
             int tar=0;
             while(p!=NULL)
@@ -241,85 +264,20 @@ class linklist{
             return tar;
         }
 
-        node<T>* return_node(int a)
+        node<T>* node_no(int a)
         {
-            node<T> *p=head;
-            for(int i=0;i<a;i++)
+            node<T> *cur=root;
+            if(a<this->size())
             {
-                p=p->next;
+                for(int i=0;i<a;i++)
+                {
+                    cur=cur->next;
+                }
             }
-            return p;
+            
+            return cur;
         }
-
-        //swap whole node (include address)
-        // void swap(int a, int b)
-        // {
-        //     node<T> *a_1=head,*a_2=head,*a_3=head;
-        //     node<T> *b_1=head,*b_2=head,*b_3=head;
-
-        //     if(a!=0 && b-a>1)
-        //     {
-        //         for(int i=0;i<a-1;i++)
-        //         {   
-        //             a_1=a_1->next;
-        //         }
-        //         a_2=a_1->next;
-        //         a_3=a_2->next;
-
-        //         for(int i=0;i<b-1;i++)
-        //         {
-        //             b_1=b_1->next;
-        //         }
-        //         b_2=b_1->next;
-        //         b_3=b_2->next;
-
-        //         a_1->next=NULL;
-        //         b_1->next=NULL;
-        //         a_2->next=NULL;
-        //         b_2->next=NULL;
-
-        //         a_1->next=b_2;
-        //         b_2->next=a_3;
-
-        //         b_1->next=a_2;
-        //         a_2->next=b_3;
-        //     }
-        //     else if(a!=0 && b-a==1)
-        //     {
-        //         for(int i=0;i<a-1;i++)
-        //         {   
-        //             a_1=a_1->next;
-        //         }
-        //         a_2=a_1->next;
-        //         a_3=a_2->next;
-                
-
-        //         for(int i=0;i<b-1;i++)
-        //         {
-        //             b_1=b_1->next;
-        //         }
-        //         b_2=b_1->next;
-        //         b_3=b_2->next;
-                
-        //         a_1->next=NULL;
-        //         b_1->next=NULL;
-        //         b_2->next=NULL;
-
-        //         a_1->next=a_3;
-        //         a_2->next=b_3;
-        //         a_3->next=a_2;
-        //     }
-        //     else if(a==0)
-        //     {
-        //         linklist<T> fake;
-        //         linklist<T> *temp;
-        //         fake.insert(this->head->item,this->head->num);
-        //         temp=this->extract(b,1);
-        //         this->paste(b-1,fake);
-        //         this->paste(0,*temp);
-        //         this->pop();
-        //     }
-        // }
 };
+
 
 #endif
